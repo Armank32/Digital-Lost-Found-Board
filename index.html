@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cal State LA Lost & Found</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>🔍 Cal State LA Lost & Found</h1>
+                    <p class="subtitle">Helping our community reunite with lost items</p>
+                </div>
+                <button class="btn-primary" id="uploadBtn">+ Report Lost/Found Item</button>
+            </div>
+        </header>
+
+        <!-- Main Content Container -->
+        <div class="main-container">
+            <!-- Left Sidebar with Popular Items -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h2>🔥 Most Searched This Week</h2>
+                    <div class="popular-items" id="popularItems">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h2>🏷️ Popular Tags</h2>
+                    <div class="popular-tags" id="popularTags">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Search and Filter Section -->
+                <div class="search-filter-section">
+                    <div class="search-container">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="search-input" 
+                            placeholder="Search items by name, description, or tags..."
+                            autocomplete="off"
+                        >
+                        <span class="search-icon">🔍</span>
+                    </div>
+                    <div class="filter-container">
+                        <button class="filter-chip active" data-filter="all">All Items</button>
+                        <button class="filter-chip" data-filter="lost">Lost</button>
+                        <button class="filter-chip" data-filter="found">Found</button>
+                        <button class="filter-chip" data-filter="keys">Keys</button>
+                        <button class="filter-chip" data-filter="electronics">Electronics</button>
+                        <button class="filter-chip" data-filter="clothing">Clothing</button>
+                        <button class="filter-chip" data-filter="bag">Bag</button>
+                        <button class="filter-chip" data-filter="other">Other</button>
+                    </div>
+                </div>
+
+                <!-- Items Gallery -->
+                <div class="items-gallery" id="itemsGallery">
+                    <!-- Items will be dynamically loaded here -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <p>😔 No items found matching your search.</p>
+                    <p class="empty-state-subtitle">Try adjusting your filters or search terms.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Upload Modal (Placeholder) -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Report Lost/Found Item</h2>
+                <button class="modal-close" id="closeUploadModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm" class="upload-form">
+                    <div class="form-group">
+                        <label for="itemType">Item Type <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="itemType" value="lost" id="itemTypeLost" required>
+                                <span>Lost</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="itemType" value="found" id="itemTypeFound" required>
+                                <span>Found</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemName">Item Name <span class="required">*</span></label>
+                        <input type="text" id="itemName" name="itemName" placeholder="e.g., Black Backpack, Car Keys" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemDescription">Description <span class="required">*</span></label>
+                        <textarea id="itemDescription" name="itemDescription" rows="4" placeholder="Provide details about the item: color, size, distinctive features, contents, etc." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemLocation">Location <span class="required">*</span></label>
+                        <input type="text" id="itemLocation" name="itemLocation" placeholder="e.g., Library - 2nd Floor, Student Union, Parking Lot A" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemDate">Date Lost/Found <span class="required">*</span></label>
+                        <input type="date" id="itemDate" name="itemDate" max="" required>
+                        <small class="form-help">Select the date when you lost or found this item.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemImage">Item Photo</label>
+                        <div class="file-upload-container">
+                            <input type="file" id="itemImage" name="itemImage" accept="image/*" style="display: none;">
+                            <label for="itemImage" class="file-upload-label">
+                                <span class="file-upload-icon">📷</span>
+                                <span class="file-upload-text">Click to upload or drag and drop</span>
+                                <span class="file-upload-hint">PNG, JPG, GIF up to 5MB</span>
+                            </label>
+                        </div>
+                        <small class="form-help">Upload a photo of the item. This helps others identify it.</small>
+                        <div class="image-preview-container" id="imagePreview" style="display: none;">
+                            <img id="imagePreviewImg" src="" alt="Preview" class="image-preview">
+                            <button type="button" class="remove-image-btn" id="removeImageBtn">Remove Image</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemTags">Tags <span class="required">*</span></label>
+                        <input type="text" id="itemTags" name="itemTags" placeholder="e.g., keys, bag, electronics, jacket" required>
+                        <small class="form-help">Separate multiple tags with commas. Common tags: keys, bag, electronics, clothing, jacket, charger, id, wallet, water bottle</small>
+                        <div class="tags-preview" id="tagsPreview"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="cancelUploadBtn">Cancel</button>
+                        <button type="submit" class="btn-primary">Submit Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal (Placeholder) -->
+    <div class="modal" id="commentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Comments & Questions</h2>
+                <button class="modal-close" id="closeCommentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="placeholder-content">
+                    <p>💬 Comment modal will be implemented here</p>
+                    <p class="placeholder-note">This component will allow users to:</p>
+                    <ul>
+                        <li>View all comments for an item</li>
+                        <li>Post new comments or questions</li>
+                        <li>Reply to existing comments</li>
+                        <li>Contact the item reporter</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
